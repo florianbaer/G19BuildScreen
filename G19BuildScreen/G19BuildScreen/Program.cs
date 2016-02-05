@@ -6,13 +6,13 @@
 // // The file 'Program.cs'.
 // // </summary>
 // // --------------------------------------------------------------------------------------------------------------------
-
 namespace G19BuildScreen
 {
     using System;
     using System.Diagnostics;
     using System.Windows;
     using System.Windows.Threading;
+
     using GammaJul.LgLcd;
     using GammaJul.LgLcd.Wpf;
 
@@ -26,6 +26,15 @@ namespace G19BuildScreen
 
         private DispatcherTimer timer;
 
+        private delegate void Action();
+
+        [STAThread]
+        internal static void Main()
+        {
+            var app = new App();
+            app.Run();
+        }
+
         /// <summary>
         ///     On startup, we are creation a new Applet.
         /// </summary>
@@ -38,6 +47,19 @@ namespace G19BuildScreen
             // Register to events to know when a device arrives, then connects the applet to the LCD Manager
             this.applet.DeviceArrival += this.Applet_DeviceArrival;
             this.applet.Connect();
+        }
+
+        /// <summary>
+        ///     This event handler will be called whenever a new device of a given type arrives in the system.
+        ///     This is where you should opens the device you want to shows the applet on.
+        ///     Take special care for thread-safety as the SDK calls this handler in another thread.
+        /// </summary>
+        private void Applet_DeviceArrival(object sender, LcdDeviceTypeEventArgs e)
+        {
+            // since with specified LcdAppletCapabilities.Qvga at the Applet's creation,
+            // we will only receive QVGA arrival notifications.
+            Debug.Assert(e.DeviceType == LcdDeviceType.Qvga);
+            this.Invoke(this.OnQvgaDeviceArrived);
         }
 
         /// <summary>
@@ -57,16 +79,26 @@ namespace G19BuildScreen
         }
 
         /// <summary>
-        ///     This event handler will be called whenever a new device of a given type arrives in the system.
-        ///     This is where you should opens the device you want to shows the applet on.
-        ///     Take special care for thread-safety as the SDK calls this handler in another thread.
+        ///     When soft buttons are pressed, switch to previous image if left arrow button was clicked,
+        ///     switch to next if the right arrow button was clicked, or closes the application if
+        ///     the cancel button was clicked.
         /// </summary>
-        private void Applet_DeviceArrival(object sender, LcdDeviceTypeEventArgs e)
+        private void LcdDeviceSoftButtonsChanged(object sender, LcdSoftButtonsEventArgs e)
         {
-            // since with specified LcdAppletCapabilities.Qvga at the Applet's creation,
-            // we will only receive QVGA arrival notifications.
-            Debug.Assert(e.DeviceType == LcdDeviceType.Qvga);
-            this.Invoke(this.OnQvgaDeviceArrived);
+            if ((e.SoftButtons & LcdSoftButtons.Cancel) == LcdSoftButtons.Cancel)
+            {
+                this.Invoke(this.Shutdown);
+            }
+            else if ((e.SoftButtons & LcdSoftButtons.Left) == LcdSoftButtons.Left)
+            {
+            }
+            
+            //// Invoke(buildScreenApplet.PreviousImage);
+            else if ((e.SoftButtons & LcdSoftButtons.Right) == LcdSoftButtons.Right)
+            {
+            }
+
+            //// Invoke(buildScreenApplet.NextImage);
         }
 
         private void OnQvgaDeviceArrived()
@@ -81,9 +113,9 @@ namespace G19BuildScreen
 
                 // Starts a timer to update the screen
                 this.timer = new DispatcherTimer(
-                    TimeSpan.FromMilliseconds(5.0),
-                    DispatcherPriority.Render,
-                    this.Timer_Tick,
+                    TimeSpan.FromSeconds(5.0), 
+                    DispatcherPriority.Render, 
+                    this.UpdateApplet, 
                     Dispatcher.CurrentDispatcher);
             }
 
@@ -92,48 +124,20 @@ namespace G19BuildScreen
             {
                 this.lcdDevice.ReOpen();
             }
+
             this.lcdDevice.DoUpdateAndDraw();
         }
 
         /// <summary>
         ///     Updates the LCD screen.
         /// </summary>
-        private void Timer_Tick(object sender, EventArgs e)
+        private void UpdateApplet(object sender, EventArgs e)
         {
             if (this.applet.IsEnabled && this.lcdDevice != null && !this.lcdDevice.IsDisposed)
             {
                 this.lcdDevice.DoUpdateAndDraw();
+                this.buildScreenApplet.UpdateBuildInformation();
             }
         }
-
-        /// <summary>
-        ///     When soft buttons are pressed, switch to previous image if left arrow button was clicked,
-        ///     switch to next if the right arrow button was clicked, or closes the application if
-        ///     the cancel button was clicked.
-        /// </summary>
-        private void LcdDeviceSoftButtonsChanged(object sender, LcdSoftButtonsEventArgs e)
-        {
-            if ((e.SoftButtons & LcdSoftButtons.Cancel) == LcdSoftButtons.Cancel)
-            {
-                this.Invoke(this.Shutdown);
-            }
-            else if ((e.SoftButtons & LcdSoftButtons.Left) == LcdSoftButtons.Left)
-            {
-            }
-            //// Invoke(buildScreenApplet.PreviousImage);
-            else if ((e.SoftButtons & LcdSoftButtons.Right) == LcdSoftButtons.Right)
-            {
-            }
-            //// Invoke(buildScreenApplet.NextImage);
-        }
-
-        [STAThread]
-        internal static void Main()
-        {
-            var app = new App();
-            app.Run();
-        }
-
-        private delegate void Action();
     }
 }

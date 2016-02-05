@@ -56,7 +56,7 @@ namespace G19BuildScreen
             //// TeamProjectPicker picker = new TeamProjectPicker(TeamProjectPickerMode.MultiProject, true);
             //// picker.ShowDialog();
             //// ProjectInfo[] projects = picker.SelectedProjects;
-
+            //// var testManagementService = this.tfs.GetService<ITestManagementService>();
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
             // Write values
@@ -67,9 +67,7 @@ namespace G19BuildScreen
 
             this.tfsUri = config.AppSettings.Settings["Uri"].Value;
             this.TeamProject = config.AppSettings.Settings["TeamProject"].Value;
-
-            // Save the changes in App.config file.
-            config.Save(ConfigurationSaveMode.Modified);
+            
             this.BuildDefinition = config.AppSettings.Settings["BuildDefinition"].Value;
 
             this.timer = new DispatcherTimer(
@@ -77,12 +75,12 @@ namespace G19BuildScreen
                 DispatcherPriority.Render,
                 this.UpdateUserInterface,
                 Dispatcher.CurrentDispatcher);
-            this.GetBuilds();
+            //this.GetBuilds();
         }
 
         private void UpdateUserInterface(object sender, EventArgs eventArgs)
         {
-            this.GetBuilds();
+            //this.GetBuilds();
         }
 
         public void GetBuilds()
@@ -133,7 +131,7 @@ namespace G19BuildScreen
 
                         this.DefinitionNameValueLabel.Content = build.BuildDefinition.Name;
 
-                        this.GetTestResult(build.Uri);
+                        ////new TestResultProvider().GetTestResult(build.Uri);
 
                         switch (build.Status)
                         {
@@ -165,28 +163,9 @@ namespace G19BuildScreen
             }
         }
 
-        private void GetTestResult(Uri buildUri)
+        public void UpdateBuildInformation()
         {
-            var testManagementService = this.tfs.GetService<ITestManagementService>();
-            var testRuns = testManagementService.GetTeamProject("DvdManager").TestRuns.ByBuild(buildUri);
-
-            var testRun = testRuns.FirstOrDefault();
-
-            if (testRun != null)
-            { 
-                this.totalTests = testRun.Statistics.TotalTests;
-
-                this.error = testRun.QueryResultsByOutcome(TestOutcome.Error).Count;
-
-                this.passed = testRun.QueryResultsByOutcome(TestOutcome.Passed).Count;
-
-                this.failed = testRun.QueryResultsByOutcome(TestOutcome.Failed).Count;
-
-                this.inconclusive = testRun.QueryResultsByOutcome(TestOutcome.Inconclusive).Count;
-
-                this.TestResultsLabel.Content =
-                    $"Total :{this.totalTests} \n Passed :{this.passed} \n Error :{this.error} \n Failed :{this.failed} \n Inconclusive :{this.inconclusive}";
-            }
+            //this.GetBuilds();
         }
     }
 }
