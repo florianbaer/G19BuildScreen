@@ -6,9 +6,10 @@ namespace G19BuildScreen
 
     public class G19BuildScreenAppletViewModel : ViewModelBase
     {
-        private readonly SolidColorBrush borderBrush;
+        private readonly SolidColorBrush statusColorBrush;
 
         private SolidColorBrush backgroundColor;
+        private Color statusColor;
 
         private string buildDefinitionName;
 
@@ -50,7 +51,7 @@ namespace G19BuildScreen
             }
         }
 
-        public SolidColorBrush StatusColor
+        public SolidColorBrush StatusColorBrush
         {
             get
             {
@@ -59,7 +60,20 @@ namespace G19BuildScreen
                     return new SolidColorBrush(Colors.Green);
                 }
 
-                return this.borderBrush;
+                return this.statusColorBrush;
+            }
+        }
+
+        public Color StatusColor
+        {
+            get
+            {
+                if (this.IsInDesignMode)
+                {
+                    return Colors.Green;
+                }
+
+                return this.statusColor;
             }
         }
 

@@ -27,14 +27,17 @@
                     <ColumnDefinition Width="50*"/>
                     <ColumnDefinition Width="50*"/>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" x:Name="RequestedLabel" HorizontalAlignment="Center" FontSize="12" Margin="0,0,0,0" FontWeight="Bold" Content="{Binding RequestedBy}"/>
+                <Label Grid.Column="0" x:Name="RequestedLabel" HorizontalAlignment="Center" FontSize="13" Margin="0,-1,0,0" FontWeight="Bold" Content="{Binding RequestedBy}"/>
                 <Label Grid.Column="1" x:Name="SuccessfulLabelValue" HorizontalAlignment="Center" FontSize="18" Margin="0,-5,0,0" FontWeight="Bold" Content="{Binding Status}"/>
             </Grid>
         </StackPanel>
         <StackPanel Grid.Row="2">
-            <Border x:Name="StatusBorder" Height="180" BorderThickness="3" BorderBrush="{Binding StatusColor}" Margin="10, 0, 10, 10" CornerRadius="20">
-            <StackPanel x:Name="BuildStatusCircle" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
-                <Label x:Name="TestResultsLabel" />
+            <Border x:Name="StatusBorder" Height="180" BorderThickness="3" BorderBrush="{Binding StatusColorBrush}" Margin="10, 0, 10, 10" CornerRadius="20">
+                <Border.Background>
+                    <SolidColorBrush Color="{Binding StatusColor}" Opacity="0.3"/>
+                </Border.Background>
+                <StackPanel x:Name="BuildStatusCircle" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                    <Label x:Name="TestResultsLabel" ></Label>
 
 
             </StackPanel>
