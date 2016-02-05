@@ -8,14 +8,27 @@ using TeamProject = Microsoft.TeamFoundation.Framework.Client.Catalog.Objects.Te
 
 namespace G19BuildScreen
 {
+    using System.Configuration;
+
     /// <summary>
     ///     Interaction logic for G19BuildScreenApplet.xaml
     /// </summary>
     public partial class G19BuildScreenApplet : UserControl
     {
+        string tfsUsername;
+        string tfsPassword;
+        string tfsUri;
         public G19BuildScreenApplet()
         {
             InitializeComponent();
+
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            
+            tfsUsername = config.AppSettings.Settings["Username"].Value;
+            
+            tfsPassword = config.AppSettings.Settings["Password"].Value;
+
+            tfsUri = config.AppSettings.Settings["Uri"].Value;
             //// this.GetBuilds();
         }
 

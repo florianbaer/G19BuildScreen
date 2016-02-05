@@ -5,6 +5,21 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:G19BuildScreen"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300" Width="300" Height="300">
-    <Grid Background="DarkGray" />
+             d:DesignHeight="250" d:DesignWidth="300" Width="300" Height="250">
+    <Grid Background="DarkGray">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <Label x:Name="DefinitionNameLabel" HorizontalAlignment="Center" FontWeight="Bold">BuildDefinition: </Label>
+        </StackPanel>
+        <StackPanel Grid.Row="1">
+            <Ellipse x:Name="BuildStatusCircle" Width="180" Height="180" Stroke="Aqua" StrokeThickness="2" Margin="0, 0, 0, 10">
+
+
+
+            </Ellipse>
+        </StackPanel>
+    </Grid>
 </UserControl>
