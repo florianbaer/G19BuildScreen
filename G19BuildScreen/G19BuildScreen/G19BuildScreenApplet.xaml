@@ -32,7 +32,7 @@
             </Grid>
         </StackPanel>
         <StackPanel Grid.Row="2">
-            <Border x:Name="StatusBorder" Height="180" BorderThickness="3" BorderBrush="{Binding BorderBrush}" Margin="10, 0, 10, 10" CornerRadius="20">
+            <Border x:Name="StatusBorder" Height="180" BorderThickness="3" BorderBrush="{Binding StatusColor}" Margin="10, 0, 10, 10" CornerRadius="20">
             <StackPanel x:Name="BuildStatusCircle" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
                 <Label x:Name="TestResultsLabel" />
 

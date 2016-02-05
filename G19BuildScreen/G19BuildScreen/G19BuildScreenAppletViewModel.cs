@@ -50,7 +50,7 @@ namespace G19BuildScreen
             }
         }
 
-        public SolidColorBrush BorderBrush
+        public SolidColorBrush StatusColor
         {
             get
             {
