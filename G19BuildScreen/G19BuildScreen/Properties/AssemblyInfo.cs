@@ -1,4 +1,13 @@
-﻿using System.Reflection;
+﻿// // --------------------------------------------------------------------------------------------------------------------
+// // <copyright file="AssemblyInfo.cs" company="BaerDev">
+// // Copyright (c) BaerDev. All rights reserved.
+// // </copyright>
+// // <summary>
+// // The file 'AssemblyInfo.cs'.
+// // </summary>
+// // --------------------------------------------------------------------------------------------------------------------
+
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 

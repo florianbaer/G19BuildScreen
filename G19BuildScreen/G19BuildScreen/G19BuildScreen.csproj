@@ -70,8 +70,8 @@
       <HintPath>..\packages\Microsoft.TeamFoundation.Build.All.12.0.30723.1\lib\net45\Microsoft.TeamFoundation.Build.Activities.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.TeamFoundation.Build.Client, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.TeamFoundationServer.ExtendedClient.14.89.0\lib\net45\Microsoft.TeamFoundation.Build.Client.dll</HintPath>
+    <Reference Include="Microsoft.TeamFoundation.Build.Client, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.TeamFoundation.Build.Client.11.0.60610.1\lib\Microsoft.TeamFoundation.Build.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.TeamFoundation.Build.Common, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">

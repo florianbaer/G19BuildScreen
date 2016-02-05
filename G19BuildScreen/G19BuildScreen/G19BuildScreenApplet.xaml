@@ -21,8 +21,7 @@
         <StackPanel Grid.Row="2">
             <Border x:Name="StatusBorder" Height="180" BorderThickness="3" BorderBrush="Aqua" Margin="10, 0, 10, 10" CornerRadius="20">
             <StackPanel x:Name="BuildStatusCircle" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
-                <Label x:Name="TestResultsLabel"></Label>
-                
+                <Label x:Name="TestResultsLabel" />
 
 
             </StackPanel>

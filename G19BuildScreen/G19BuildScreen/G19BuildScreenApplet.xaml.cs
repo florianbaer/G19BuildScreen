@@ -1,52 +1,81 @@
-﻿using System;
-using System.Net;
-using System.Windows.Controls;
-using Microsoft.TeamFoundation.Build.Client;
-using Microsoft.TeamFoundation.Client;
-using Microsoft.TeamFoundation.VersionControl.Client;
-using TeamProject = Microsoft.TeamFoundation.Framework.Client.Catalog.Objects.TeamProject;
+﻿// // --------------------------------------------------------------------------------------------------------------------
+// // <copyright file="G19BuildScreenApplet.xaml.cs" company="BaerDev">
+// // Copyright (c) BaerDev. All rights reserved.
+// // </copyright>
+// // <summary>
+// // The file 'G19BuildScreenApplet.xaml.cs'.
+// // </summary>
+// // --------------------------------------------------------------------------------------------------------------------
 
 namespace G19BuildScreen
 {
+    using System;
     using System.Configuration;
     using System.Linq;
+    using System.Net;
+    using System.Windows.Controls;
     using System.Windows.Media;
     using System.Windows.Threading;
+    using Microsoft.TeamFoundation.Build.Client;
+    using Microsoft.TeamFoundation.Client;
     using Microsoft.TeamFoundation.TestManagement.Client;
-    using Brush = System.Windows.Media.Brush;
-    using Color = System.Drawing.Color;
 
     /// <summary>
     ///     Interaction logic for G19BuildScreenApplet.xaml
     /// </summary>
     public partial class G19BuildScreenApplet : UserControl
     {
-        string tfsUsername;
-        string tfsPassword;
-        string tfsUri;
+        private readonly string BuildDefinition;
 
-        TfsTeamProjectCollection tfs;
-        DispatcherTimer timer;
+        private readonly string TeamProject;
 
-        int failed;
-        int inconclusive;
-        int passed;
-        int error;
-        int totalTests;
+        private readonly string tfsPassword;
+
+        private readonly string tfsUri;
+
+        private readonly string tfsUsername;
+
+        private int error;
+
+        private int failed;
+
+        private int inconclusive;
+
+        private int passed;
+
+        private TfsTeamProjectCollection tfs;
+
+        private DispatcherTimer timer;
+
+        private int totalTests;
 
         public G19BuildScreenApplet()
         {
-            InitializeComponent();
+            this.InitializeComponent();
+
+            //// TeamProjectPicker picker = new TeamProjectPicker(TeamProjectPickerMode.MultiProject, true);
+            //// picker.ShowDialog();
+            //// ProjectInfo[] projects = picker.SelectedProjects;
 
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            
-            tfsUsername = config.AppSettings.Settings["Username"].Value;
-            
-            tfsPassword = config.AppSettings.Settings["Password"].Value;
 
-            tfsUri = config.AppSettings.Settings["Uri"].Value;
-            
-            timer = new DispatcherTimer(TimeSpan.FromSeconds(5.0), DispatcherPriority.Render, this.UpdateUserInterface, 
+            // Write values
+
+            this.tfsUsername = config.AppSettings.Settings["Username"].Value;
+
+            this.tfsPassword = config.AppSettings.Settings["Password"].Value;
+
+            this.tfsUri = config.AppSettings.Settings["Uri"].Value;
+            this.TeamProject = config.AppSettings.Settings["TeamProject"].Value;
+
+            // Save the changes in App.config file.
+            config.Save(ConfigurationSaveMode.Modified);
+            this.BuildDefinition = config.AppSettings.Settings["BuildDefinition"].Value;
+
+            this.timer = new DispatcherTimer(
+                TimeSpan.FromSeconds(5.0),
+                DispatcherPriority.Render,
+                this.UpdateUserInterface,
                 Dispatcher.CurrentDispatcher);
             this.GetBuilds();
         }
@@ -59,15 +88,17 @@ namespace G19BuildScreen
         public void GetBuilds()
         {
             NetworkCredential cred = new NetworkCredential(this.tfsUsername, this.tfsPassword);
-            
-            tfs = new TfsTeamProjectCollection(new Uri(this.tfsUri), cred);
 
-            tfs.Authenticate();
-            var buildService = (IBuildServer)tfs.GetService(typeof(IBuildServer));
+            this.tfs = new TfsTeamProjectCollection(new Uri(this.tfsUri), cred);
+
+            this.tfs.Authenticate();
+            var buildService = (IBuildServer)this.tfs.GetService(typeof(IBuildServer));
             {
                 if (buildService != null)
                 {
-                    IBuildDefinition buildDetailSpec = buildService.GetBuildDefinition("DvdManager", "DvdManager_CI_Main");
+                    IBuildDefinition buildDetailSpec = buildService.GetBuildDefinition(
+                        this.TeamProject,
+                        this.BuildDefinition);
 
                     IQueuedBuildSpec queed = buildService.CreateBuildQueueSpec("DvdManager", "DvdManager_CI_Main");
 
@@ -98,11 +129,10 @@ namespace G19BuildScreen
                     }
                     else
                     {
-
                         IBuildDetail build = buildService.GetBuild(buildDetailSpec.LastBuildUri);
 
                         this.DefinitionNameValueLabel.Content = build.BuildDefinition.Name;
-                        
+
                         this.GetTestResult(build.Uri);
 
                         switch (build.Status)
@@ -133,37 +163,30 @@ namespace G19BuildScreen
                     }
                 }
             }
-
-
         }
 
         private void GetTestResult(Uri buildUri)
         {
-            var testManagementService = tfs.GetService<ITestManagementService>();
+            var testManagementService = this.tfs.GetService<ITestManagementService>();
             var testRuns = testManagementService.GetTeamProject("DvdManager").TestRuns.ByBuild(buildUri);
-            
+
             var testRun = testRuns.FirstOrDefault();
 
-
             if (testRun != null)
-            {
+            { 
+                this.totalTests = testRun.Statistics.TotalTests;
 
-                
-                totalTests = testRun.Statistics.TotalTests;
+                this.error = testRun.QueryResultsByOutcome(TestOutcome.Error).Count;
 
-                error = testRun.QueryResultsByOutcome(TestOutcome.Error).Count;
+                this.passed = testRun.QueryResultsByOutcome(TestOutcome.Passed).Count;
 
-                passed = testRun.QueryResultsByOutcome(TestOutcome.Passed).Count;
+                this.failed = testRun.QueryResultsByOutcome(TestOutcome.Failed).Count;
 
-                failed = testRun.QueryResultsByOutcome(TestOutcome.Failed).Count;
-
-                
-                inconclusive = testRun.QueryResultsByOutcome(TestOutcome.Inconclusive).Count;
+                this.inconclusive = testRun.QueryResultsByOutcome(TestOutcome.Inconclusive).Count;
 
                 this.TestResultsLabel.Content =
-                    $"Total :{this.totalTests} \n Passed :{passed} \n Error :{error} \n Failed :{failed} \n Inconclusive :{this.inconclusive}";
+                    $"Total :{this.totalTests} \n Passed :{this.passed} \n Error :{this.error} \n Failed :{this.failed} \n Inconclusive :{this.inconclusive}";
             }
-
         }
     }
 }

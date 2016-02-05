@@ -1,17 +1,29 @@
-﻿using System;
-using System.Diagnostics;
-using System.Windows;
-using System.Windows.Threading;
-using GammaJul.LgLcd;
-using GammaJul.LgLcd.Wpf;
+﻿// // --------------------------------------------------------------------------------------------------------------------
+// // <copyright file="Program.cs" company="BaerDev">
+// // Copyright (c) BaerDev. All rights reserved.
+// // </copyright>
+// // <summary>
+// // The file 'Program.cs'.
+// // </summary>
+// // --------------------------------------------------------------------------------------------------------------------
 
 namespace G19BuildScreen
 {
+    using System;
+    using System.Diagnostics;
+    using System.Windows;
+    using System.Windows.Threading;
+    using GammaJul.LgLcd;
+    using GammaJul.LgLcd.Wpf;
+
     internal class App : Application
     {
         private LcdApplet applet;
+
         private G19BuildScreenApplet buildScreenApplet;
+
         private LcdDeviceQvga lcdDevice;
+
         private DispatcherTimer timer;
 
         /// <summary>
@@ -21,11 +33,11 @@ namespace G19BuildScreen
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            applet = new LcdApplet("G19 Build Viewer", LcdAppletCapabilities.Qvga);
+            this.applet = new LcdApplet("G19 Build Viewer", LcdAppletCapabilities.Qvga);
 
             // Register to events to know when a device arrives, then connects the applet to the LCD Manager
-            applet.DeviceArrival += Applet_DeviceArrival;
-            applet.Connect();
+            this.applet.DeviceArrival += this.Applet_DeviceArrival;
+            this.applet.Connect();
         }
 
         /// <summary>
@@ -34,10 +46,14 @@ namespace G19BuildScreen
         /// <param name="action">Method to execute.</param>
         private void Invoke(Action action)
         {
-            if (CheckAccess())
+            if (this.CheckAccess())
+            {
                 action();
+            }
             else
-                Dispatcher.BeginInvoke(action, DispatcherPriority.Render);
+            {
+                this.Dispatcher.BeginInvoke(action, DispatcherPriority.Render);
+            }
         }
 
         /// <summary>
@@ -50,31 +66,33 @@ namespace G19BuildScreen
             // since with specified LcdAppletCapabilities.Qvga at the Applet's creation,
             // we will only receive QVGA arrival notifications.
             Debug.Assert(e.DeviceType == LcdDeviceType.Qvga);
-            Invoke(OnQvgaDeviceArrived);
+            this.Invoke(this.OnQvgaDeviceArrived);
         }
 
         private void OnQvgaDeviceArrived()
         {
             // First device arrival, creates the device
-            if (lcdDevice == null)
+            if (this.lcdDevice == null)
             {
-                lcdDevice = (LcdDeviceQvga) applet.OpenDeviceByType(LcdDeviceType.Qvga);
-                buildScreenApplet = new G19BuildScreenApplet();
-                lcdDevice.CurrentPage = new LcdWpfPage(lcdDevice)
-                {
-                    Element = buildScreenApplet
-                };
-                lcdDevice.SoftButtonsChanged += LcdDeviceSoftButtonsChanged;
+                this.lcdDevice = (LcdDeviceQvga)this.applet.OpenDeviceByType(LcdDeviceType.Qvga);
+                this.buildScreenApplet = new G19BuildScreenApplet();
+                this.lcdDevice.CurrentPage = new LcdWpfPage(this.lcdDevice) { Element = this.buildScreenApplet };
+                this.lcdDevice.SoftButtonsChanged += this.LcdDeviceSoftButtonsChanged;
 
                 // Starts a timer to update the screen
-                timer = new DispatcherTimer(TimeSpan.FromMilliseconds(5.0), DispatcherPriority.Render, Timer_Tick,
+                this.timer = new DispatcherTimer(
+                    TimeSpan.FromMilliseconds(5.0),
+                    DispatcherPriority.Render,
+                    this.Timer_Tick,
                     Dispatcher.CurrentDispatcher);
             }
 
             // Subsequent device arrival means the device was removed and replugged, simply reopens it
             else
-                lcdDevice.ReOpen();
-            lcdDevice.DoUpdateAndDraw();
+            {
+                this.lcdDevice.ReOpen();
+            }
+            this.lcdDevice.DoUpdateAndDraw();
         }
 
         /// <summary>
@@ -82,8 +100,10 @@ namespace G19BuildScreen
         /// </summary>
         private void Timer_Tick(object sender, EventArgs e)
         {
-            if (applet.IsEnabled && lcdDevice != null && !lcdDevice.IsDisposed)
-                lcdDevice.DoUpdateAndDraw();
+            if (this.applet.IsEnabled && this.lcdDevice != null && !this.lcdDevice.IsDisposed)
+            {
+                this.lcdDevice.DoUpdateAndDraw();
+            }
         }
 
         /// <summary>
@@ -94,7 +114,9 @@ namespace G19BuildScreen
         private void LcdDeviceSoftButtonsChanged(object sender, LcdSoftButtonsEventArgs e)
         {
             if ((e.SoftButtons & LcdSoftButtons.Cancel) == LcdSoftButtons.Cancel)
-                Invoke(Shutdown);
+            {
+                this.Invoke(this.Shutdown);
+            }
             else if ((e.SoftButtons & LcdSoftButtons.Left) == LcdSoftButtons.Left)
             {
             }
