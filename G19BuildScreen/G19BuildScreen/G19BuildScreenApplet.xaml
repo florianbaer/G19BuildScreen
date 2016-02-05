@@ -13,15 +13,15 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
-            <Label x:Name="DefinitionNameLabel" HorizontalAlignment="Center" FontWeight="Bold">BuildDefinition: </Label>
+            <Label x:Name="DefinitionNameValueLabel" HorizontalAlignment="Center" FontSize="20" Margin="0,-5,0,0" FontWeight="Bold">DefinitionName</Label>
         </StackPanel>
         <StackPanel Grid.Row="1">
-            <Label x:Name="DefinitionNameValueLabel" HorizontalAlignment="Center" FontWeight="Bold">CI_blabla</Label>
+            <Label x:Name="SuccessfulLabelValue" HorizontalAlignment="Center" FontSize="18" Margin="0,-5,0,0" FontWeight="Bold">Successful</Label>
         </StackPanel>
         <StackPanel Grid.Row="2">
-            <Border x:Name="StatusBorder" BorderThickness="3" BorderBrush="Aqua" Margin="10, 0, 10, 10" CornerRadius="20">
-            <StackPanel x:Name="BuildStatusCircle" Width="180" Height="180" >
-                
+            <Border x:Name="StatusBorder" Height="180" BorderThickness="3" BorderBrush="Aqua" Margin="10, 0, 10, 10" CornerRadius="20">
+            <StackPanel x:Name="BuildStatusCircle" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+                <Label x:Name="TestResultsLabel"></Label>
                 
 
 

@@ -9,8 +9,10 @@ using TeamProject = Microsoft.TeamFoundation.Framework.Client.Catalog.Objects.Te
 namespace G19BuildScreen
 {
     using System.Configuration;
+    using System.Linq;
     using System.Windows.Media;
     using System.Windows.Threading;
+    using Microsoft.TeamFoundation.TestManagement.Client;
     using Brush = System.Windows.Media.Brush;
     using Color = System.Drawing.Color;
 
@@ -22,7 +24,16 @@ namespace G19BuildScreen
         string tfsUsername;
         string tfsPassword;
         string tfsUri;
+
+        TfsTeamProjectCollection tfs;
         DispatcherTimer timer;
+
+        int failed;
+        int inconclusive;
+        int passed;
+        int error;
+        int totalTests;
+
         public G19BuildScreenApplet()
         {
             InitializeComponent();
@@ -49,7 +60,7 @@ namespace G19BuildScreen
         {
             NetworkCredential cred = new NetworkCredential(this.tfsUsername, this.tfsPassword);
             
-            TfsTeamProjectCollection tfs = new TfsTeamProjectCollection(new Uri(this.tfsUri), cred);
+            tfs = new TfsTeamProjectCollection(new Uri(this.tfsUri), cred);
 
             tfs.Authenticate();
             var buildService = (IBuildServer)tfs.GetService(typeof(IBuildServer));
@@ -66,16 +77,21 @@ namespace G19BuildScreen
                     {
                         foreach (IQueuedBuild queuedBuild in queryResult.QueuedBuilds)
                         {
+                            this.DefinitionNameValueLabel.Content = queuedBuild.Build.BuildDefinition.Name;
+
                             switch (queuedBuild.Status)
                             {
                                 case QueueStatus.InProgress:
                                     this.StatusBorder.BorderBrush = new SolidColorBrush(Colors.Black);
+                                    this.SuccessfulLabelValue.Content = queuedBuild.Status.ToString();
                                     break;
                                 case QueueStatus.Canceled:
                                     this.StatusBorder.BorderBrush = new SolidColorBrush(Colors.Coral);
+                                    this.SuccessfulLabelValue.Content = queuedBuild.Status.ToString();
                                     break;
                                 default:
                                     this.StatusBorder.BorderBrush = new SolidColorBrush(Colors.Fuchsia);
+                                    this.SuccessfulLabelValue.Content = "Not applicable";
                                     break;
                             }
                         }
@@ -85,22 +101,31 @@ namespace G19BuildScreen
 
                         IBuildDetail build = buildService.GetBuild(buildDetailSpec.LastBuildUri);
 
+                        this.DefinitionNameValueLabel.Content = build.BuildDefinition.Name;
+                        
+                        this.GetTestResult(build.Uri);
+
                         switch (build.Status)
                         {
                             case BuildStatus.Succeeded:
                                 this.StatusBorder.BorderBrush = new SolidColorBrush(Colors.Green);
+                                this.SuccessfulLabelValue.Content = build.Status.ToString();
                                 break;
                             case BuildStatus.Failed:
                                 this.StatusBorder.BorderBrush = new SolidColorBrush(Colors.Red);
+                                this.SuccessfulLabelValue.Content = build.Status.ToString();
                                 break;
                             case BuildStatus.InProgress:
                                 this.StatusBorder.BorderBrush = new SolidColorBrush(Colors.Black);
+                                this.SuccessfulLabelValue.Content = build.Status.ToString();
                                 break;
                             case BuildStatus.PartiallySucceeded:
                                 this.StatusBorder.BorderBrush = new SolidColorBrush(Colors.Orange);
+                                this.SuccessfulLabelValue.Content = build.Status.ToString();
                                 break;
                             case BuildStatus.Stopped:
                                 this.StatusBorder.BorderBrush = new SolidColorBrush(Colors.PaleVioletRed);
+                                this.SuccessfulLabelValue.Content = build.Status.ToString();
                                 break;
                             default:
                                 break;
@@ -109,6 +134,35 @@ namespace G19BuildScreen
                 }
             }
 
+
+        }
+
+        private void GetTestResult(Uri buildUri)
+        {
+            var testManagementService = tfs.GetService<ITestManagementService>();
+            var testRuns = testManagementService.GetTeamProject("DvdManager").TestRuns.ByBuild(buildUri);
+            
+            var testRun = testRuns.FirstOrDefault();
+
+
+            if (testRun != null)
+            {
+
+                
+                totalTests = testRun.Statistics.TotalTests;
+
+                error = testRun.QueryResultsByOutcome(TestOutcome.Error).Count;
+
+                passed = testRun.QueryResultsByOutcome(TestOutcome.Passed).Count;
+
+                failed = testRun.QueryResultsByOutcome(TestOutcome.Failed).Count;
+
+                
+                inconclusive = testRun.QueryResultsByOutcome(TestOutcome.Inconclusive).Count;
+
+                this.TestResultsLabel.Content =
+                    $"Total :{this.totalTests} \n Passed :{passed} \n Error :{error} \n Failed :{failed} \n Inconclusive :{this.inconclusive}";
+            }
 
         }
     }
