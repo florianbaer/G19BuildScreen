@@ -8,18 +8,25 @@
              d:DesignHeight="250" d:DesignWidth="300" Width="300" Height="250">
     <Grid Background="DarkGray">
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel>
+        <StackPanel Grid.Row="0">
             <Label x:Name="DefinitionNameLabel" HorizontalAlignment="Center" FontWeight="Bold">BuildDefinition: </Label>
         </StackPanel>
         <StackPanel Grid.Row="1">
-            <Ellipse x:Name="BuildStatusCircle" Width="180" Height="180" Stroke="Aqua" StrokeThickness="2" Margin="0, 0, 0, 10">
+            <Label x:Name="DefinitionNameValueLabel" HorizontalAlignment="Center" FontWeight="Bold">CI_blabla</Label>
+        </StackPanel>
+        <StackPanel Grid.Row="2">
+            <Border x:Name="StatusBorder" BorderThickness="3" BorderBrush="Aqua" Margin="10, 0, 10, 10" CornerRadius="20">
+            <StackPanel x:Name="BuildStatusCircle" Width="180" Height="180" >
+                
+                
 
 
-
-            </Ellipse>
+            </StackPanel>
+            </Border>
         </StackPanel>
     </Grid>
 </UserControl>
