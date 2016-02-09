@@ -10,7 +10,17 @@
     <UserControl.DataContext>
         <local:G19BuildScreenAppletViewModel/>
     </UserControl.DataContext>
-
+    <UserControl.Resources>
+        <Style TargetType="{x:Type Control}" x:Key="baseStyle">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource baseStyle}"></Style>
+        <Style TargetType="{x:Type Label}" BasedOn="{StaticResource baseStyle}"></Style>
+        <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource baseStyle}"></Style>
+        <Style TargetType="{x:Type ListView}" BasedOn="{StaticResource baseStyle}"></Style>
+        <!-- ComboBox, RadioButton, CheckBox, etc... -->
+    </UserControl.Resources>
 
     <Grid Background="{Binding BackgroundColor}">
         <Grid.RowDefinitions>
@@ -32,15 +42,44 @@
             </Grid>
         </StackPanel>
         <StackPanel Grid.Row="2">
-            <Border x:Name="StatusBorder" Height="180" BorderThickness="3" BorderBrush="{Binding StatusColorBrush}" Margin="10, 0, 10, 10" CornerRadius="20">
+            <Border x:Name="StatusBorder" Height="190" BorderThickness="3" BorderBrush="{Binding StatusColorBrush}" Margin="10, 0, 10, 0" CornerRadius="20">
                 <Border.Background>
                     <SolidColorBrush Color="{Binding StatusColor}" Opacity="0.3"/>
                 </Border.Background>
                 <StackPanel x:Name="BuildStatusCircle" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
-                    <Label x:Name="TestResultsLabel" ></Label>
-
-
-            </StackPanel>
+                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Label x:Name="RequestedTimeLabel" Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0" Content="{Binding TimeRequested}"/>
+                        <Grid Grid.Row="1" Grid.ColumnSpan="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Label x:Name="TestResultsTitle" Grid.ColumnSpan="2" Grid.Row="0" FontWeight="Bold">
+                                <TextBlock FontWeight="Bold" TextDecorations="Underline">Test Results:</TextBlock>
+                            </Label>
+                            <Label Grid.Row="1" Grid.Column="0" Content="{Binding PassedTests}"/>
+                            <Label Grid.Row="1" Grid.Column="1" Content="{Binding FailedTests}"/>
+                            <Label Grid.Row="2" Grid.Column="0" Content="{Binding ErrorTests}"/>
+                            <Label Grid.Row="2" Grid.Column="1" Content="{Binding InconclusiveTests}"/>
+                        </Grid>
+                        
+                        <Label x:Name="TestResultsLabel"></Label>
+                        
+                    </Grid>
+                </StackPanel>
             </Border>
         </StackPanel>
     </Grid>
