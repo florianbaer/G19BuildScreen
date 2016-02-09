@@ -29,6 +29,8 @@ namespace G19BuildScreen
 
         private string inconclusiveTests;
 
+        private string teamProjectName;
+
         public SolidColorBrush BackgroundColor
         {
             get
@@ -65,13 +67,29 @@ namespace G19BuildScreen
             }
         }
 
+        public string TeamProjectName
+        {
+            get
+            {
+                if (this.IsInDesignMode)
+                {
+                    return "G19BuildScreen";
+                }
+                return this.teamProjectName;
+            }
+            set
+            {
+                this.teamProjectName = value;
+            }
+        }
+
         public string RequestedBy
         {
             get
             {
                 if (this.IsInDesignMode)
                 {
-                    return "Requested by: baerf";
+                    return "Requested by: binaryfr3ak";
                 }
 
                 return $"Requested by: {this.requestedBy}";

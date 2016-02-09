@@ -130,6 +130,7 @@ namespace G19BuildScreen
                         IBuildDetail build = buildService.GetBuild(buildDetailSpec.LastBuildUri);
 
                         this.DefinitionNameValueLabel.Content = build.BuildDefinition.Name;
+                        /////build.BuildDefinition.TeamProject;
 
                         ////new TestResultProvider().GetTestResult(build.Uri);
 
