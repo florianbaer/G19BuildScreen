@@ -16,5 +16,10 @@ namespace G19BuildScreen
         public string Status { get; set; }
 
         public TestResults TestResults { get; set; }
+
+        public string TeamProjectName { get; set; }
+
+        public DateTime TimeRequested { get; set; }
+        
     }
 }

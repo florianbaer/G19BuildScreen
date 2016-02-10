@@ -1,12 +1,25 @@
 namespace G19BuildScreen
 {
     using System;
+    using System.Globalization;
     using System.Windows.Media;
 
     using GalaSoft.MvvmLight;
 
     public class G19BuildScreenAppletViewModel : ViewModelBase
     {
+        public G19BuildScreenAppletViewModel(G19BuildScreenAppletModel model)
+        {
+            this.model = model;
+        }
+
+        public G19BuildScreenAppletViewModel()
+        {
+        }
+
+        private G19BuildScreenAppletModel model;
+        
+
         private readonly SolidColorBrush statusColorBrush;
 
         private SolidColorBrush backgroundColor;
@@ -19,7 +32,7 @@ namespace G19BuildScreen
 
         private Color statusColor;
 
-        private string timeRequested;
+        private DateTime timeRequested;
 
         private string passedTests;
 
@@ -58,12 +71,7 @@ namespace G19BuildScreen
                     return "BuildDefintionName";
                 }
 
-                return this.buildDefinitionName;
-            }
-
-            set
-            {
-                this.buildDefinitionName = value;
+                return this.model.BuildDefinitionName;
             }
         }
 
@@ -75,11 +83,7 @@ namespace G19BuildScreen
                 {
                     return "G19BuildScreen";
                 }
-                return this.teamProjectName;
-            }
-            set
-            {
-                this.teamProjectName = value;
+                return this.model.TeamProjectName;
             }
         }
 
@@ -89,15 +93,10 @@ namespace G19BuildScreen
             {
                 if (this.IsInDesignMode)
                 {
-                    return "Requested by: binaryfr3ak";
+                    return "binaryfr3ak";
                 }
 
-                return $"Requested by: {this.requestedBy}";
-            }
-
-            set
-            {
-                this.requestedBy = value;
+                return this.model.RequestedBy;
             }
         }
 
@@ -110,12 +109,7 @@ namespace G19BuildScreen
                     return "Successful";
                 }
 
-                return this.status;
-            }
-
-            set
-            {
-                this.status = value;
+                return this.model.Status;
             }
         }
 
@@ -128,7 +122,7 @@ namespace G19BuildScreen
                     return Colors.Green;
                 }
 
-                return this.statusColor;
+                return StringStatusColorParser.GetColorForStatus(this.Status);
             }
         }
 
@@ -141,7 +135,7 @@ namespace G19BuildScreen
                     return new SolidColorBrush(Colors.Green);
                 }
 
-                return this.statusColorBrush;
+                return new SolidColorBrush(this.StatusColor);
             }
         }
 
@@ -151,15 +145,22 @@ namespace G19BuildScreen
             {
                 if (this.IsInDesignMode)
                 {
-                    return $"Requested: {DateTime.Now.ToLocalTime()}";
+                    return $"{DateTime.Now.ToLocalTime().ToString("HH:mm:ss - dd-MMM-yyyy")}";
                 }
 
-                return this.timeRequested;
+                return this.model.TimeRequested.ToString("HH:mm:ss - dd-MMM-yyyy");
             }
+        }
 
-            set
+        public string TotalTests
+        {
+            get
             {
-                this.timeRequested = value;
+                if (this.IsInDesignMode)
+                {
+                    return $"from 126";
+                }
+                return $"from {this.model.TestResults.Total}";
             }
         }
 
@@ -171,11 +172,7 @@ namespace G19BuildScreen
                 {
                     return $"Passed: 126";
                 }
-                return this.passedTests;
-            }
-            set
-            {
-                this.passedTests = value;
+                return $"{this.model.TestResults.Passed}";
             }
         }
 
@@ -187,11 +184,7 @@ namespace G19BuildScreen
                 {
                     return $"Failed: 3";
                 }
-                return this.failedTests;
-            }
-            set
-            {
-                this.failedTests = value;
+                return $"Failed: {this.model.TestResults.Failed}";
             }
         }
 
@@ -203,11 +196,7 @@ namespace G19BuildScreen
                 {
                     return $"Error: 0";
                 }
-                return this.errorTests;
-            }
-            set
-            {
-                this.errorTests = value;
+                return $"Error: {this.model.TestResults.Error}";
             }
         }
 
@@ -220,11 +209,7 @@ namespace G19BuildScreen
                 {
                     return $"Inconclusive: 2";
                 }
-                return this.inconclusiveTests;
-            }
-            set
-            {
-                this.inconclusiveTests = value;
+                return $"Inconclusive: {this.model.TestResults.Inconclusive}";
             }
         }
     }
