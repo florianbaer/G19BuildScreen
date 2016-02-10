@@ -109,16 +109,6 @@ namespace G19BuildScreen
             {
                 this.Invoke(this.Shutdown);
             }
-            else if ((e.SoftButtons & LcdSoftButtons.Left) == LcdSoftButtons.Left)
-            {
-            }
-            
-            //// Invoke(buildScreenApplet.PreviousImage);
-            else if ((e.SoftButtons & LcdSoftButtons.Right) == LcdSoftButtons.Right)
-            {
-            }
-
-            //// Invoke(buildScreenApplet.NextImage);
         }
 
         private void OnQvgaDeviceArrived()
