@@ -361,6 +361,14 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authorizers\ActiveDirectoryBuildInformationAuthorizer.cs" />
+    <Compile Include="Authorizers\IBuildInformationAuthorizer.cs" />
+    <Compile Include="Authorizers\NetworkBuildInformationAuthorizer.cs" />
+    <Compile Include="Authorizers\TfsOnlineBuildInformationAuthorizer.cs" />
+    <Compile Include="BuildInformationGetter\FinishedBuildInformationGetter.cs" />
+    <Compile Include="BuildInformationGetter\IBuildInformationGetter.cs" />
+    <Compile Include="BuildInformationGetter\QueuedBuildInformationGetter.cs" />
+    <Compile Include="BuildInformationProvider.cs" />
     <Compile Include="G19BuildScreenApplet.xaml.cs">
       <DependentUpon>G19BuildScreenApplet.xaml</DependentUpon>
     </Compile>
@@ -374,7 +382,9 @@
     <Compile Include="TfsBuildInformation.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

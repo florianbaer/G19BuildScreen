@@ -16,6 +16,10 @@ namespace G19BuildScreen
     using System.Windows.Controls;
     using System.Windows.Media;
     using System.Windows.Threading;
+
+    using G19BuildScreen.Authorizers;
+    using G19BuildScreen.BuildInformationGetter;
+
     using Microsoft.TeamFoundation.Build.Client;
     using Microsoft.TeamFoundation.Client;
     using Microsoft.TeamFoundation.TestManagement.Client;
@@ -25,148 +29,9 @@ namespace G19BuildScreen
     /// </summary>
     public partial class G19BuildScreenApplet : UserControl
     {
-        private readonly string BuildDefinition;
-
-        private readonly string TeamProject;
-
-        private readonly string tfsPassword;
-
-        private readonly string tfsUri;
-
-        private readonly string tfsUsername;
-
-        private int error;
-
-        private int failed;
-
-        private int inconclusive;
-
-        private int passed;
-
-        private TfsTeamProjectCollection tfs;
-
-        private DispatcherTimer timer;
-
-        private int totalTests;
-
         public G19BuildScreenApplet()
         {
             this.InitializeComponent();
-
-            //// TeamProjectPicker picker = new TeamProjectPicker(TeamProjectPickerMode.MultiProject, true);
-            //// picker.ShowDialog();
-            //// ProjectInfo[] projects = picker.SelectedProjects;
-            //// var testManagementService = this.tfs.GetService<ITestManagementService>();
-            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-
-            // Write values
-
-            this.tfsUsername = config.AppSettings.Settings["Username"].Value;
-
-            this.tfsPassword = config.AppSettings.Settings["Password"].Value;
-
-            this.tfsUri = config.AppSettings.Settings["Uri"].Value;
-            this.TeamProject = config.AppSettings.Settings["TeamProject"].Value;
-            
-            this.BuildDefinition = config.AppSettings.Settings["BuildDefinition"].Value;
-
-            this.timer = new DispatcherTimer(
-                TimeSpan.FromSeconds(5.0),
-                DispatcherPriority.Render,
-                this.UpdateUserInterface,
-                Dispatcher.CurrentDispatcher);
-            //this.GetBuilds();
-        }
-
-        private void UpdateUserInterface(object sender, EventArgs eventArgs)
-        {
-            //this.GetBuilds();
-        }
-
-        public void GetBuilds()
-        {
-            NetworkCredential cred = new NetworkCredential(this.tfsUsername, this.tfsPassword);
-
-            this.tfs = new TfsTeamProjectCollection(new Uri(this.tfsUri), cred);
-
-            this.tfs.Authenticate();
-            var buildService = (IBuildServer)this.tfs.GetService(typeof(IBuildServer));
-            {
-                if (buildService != null)
-                {
-                    IBuildDefinition buildDetailSpec = buildService.GetBuildDefinition(
-                        this.TeamProject,
-                        this.BuildDefinition);
-
-                    IQueuedBuildSpec queed = buildService.CreateBuildQueueSpec("DvdManager", "DvdManager_CI_Main");
-
-                    IQueuedBuildQueryResult queryResult = buildService.QueryQueuedBuilds(queed);
-
-                    if (queryResult.QueuedBuilds.Length > 0)
-                    {
-                        foreach (IQueuedBuild queuedBuild in queryResult.QueuedBuilds)
-                        {
-                            this.DefinitionNameValueLabel.Content = queuedBuild.Build.BuildDefinition.Name;
-
-                            switch (queuedBuild.Status)
-                            {
-                                case QueueStatus.InProgress:
-                                    this.StatusBorder.BorderBrush = new SolidColorBrush(Colors.Black);
-                                    this.SuccessfulLabelValue.Content = queuedBuild.Status.ToString();
-                                    break;
-                                case QueueStatus.Canceled:
-                                    this.StatusBorder.BorderBrush = new SolidColorBrush(Colors.Coral);
-                                    this.SuccessfulLabelValue.Content = queuedBuild.Status.ToString();
-                                    break;
-                                default:
-                                    this.StatusBorder.BorderBrush = new SolidColorBrush(Colors.Fuchsia);
-                                    this.SuccessfulLabelValue.Content = "Not applicable";
-                                    break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        IBuildDetail build = buildService.GetBuild(buildDetailSpec.LastBuildUri);
-
-                        this.DefinitionNameValueLabel.Content = build.BuildDefinition.Name;
-                        /////build.BuildDefinition.TeamProject;
-
-                        ////new TestResultProvider().GetTestResult(build.Uri);
-
-                        switch (build.Status)
-                        {
-                            case BuildStatus.Succeeded:
-                                this.StatusBorder.BorderBrush = new SolidColorBrush(Colors.Green);
-                                this.SuccessfulLabelValue.Content = build.Status.ToString();
-                                break;
-                            case BuildStatus.Failed:
-                                this.StatusBorder.BorderBrush = new SolidColorBrush(Colors.Red);
-                                this.SuccessfulLabelValue.Content = build.Status.ToString();
-                                break;
-                            case BuildStatus.InProgress:
-                                this.StatusBorder.BorderBrush = new SolidColorBrush(Colors.Black);
-                                this.SuccessfulLabelValue.Content = build.Status.ToString();
-                                break;
-                            case BuildStatus.PartiallySucceeded:
-                                this.StatusBorder.BorderBrush = new SolidColorBrush(Colors.Orange);
-                                this.SuccessfulLabelValue.Content = build.Status.ToString();
-                                break;
-                            case BuildStatus.Stopped:
-                                this.StatusBorder.BorderBrush = new SolidColorBrush(Colors.PaleVioletRed);
-                                this.SuccessfulLabelValue.Content = build.Status.ToString();
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
-            }
-        }
-
-        public void UpdateBuildInformation()
-        {
-            //this.GetBuilds();
         }
     }
 }

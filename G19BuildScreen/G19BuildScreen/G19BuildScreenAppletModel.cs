@@ -10,6 +10,11 @@ namespace G19BuildScreen
 
     public class G19BuildScreenAppletModel
     {
+        public G19BuildScreenAppletModel()
+        {
+            this.TestResults = new TestResults();
+        }
+
         public string BuildDefinitionName { get; set; }
         public string RequestedBy { get; set; }
 
@@ -20,6 +25,7 @@ namespace G19BuildScreen
         public string TeamProjectName { get; set; }
 
         public DateTime TimeRequested { get; set; }
-        
+
+        public Uri BuildUri { get; set; }
     }
 }

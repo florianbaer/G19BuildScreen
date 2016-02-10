@@ -14,8 +14,11 @@ namespace G19BuildScreen
         {
             switch (status)
             {
-                case "Successful":
+                case "Succeeded":
                     return Colors.LimeGreen;
+                    break;
+                case "InProgress":
+                    return Colors.White;
                     break;
                 default:
                     return Colors.Fuchsia;

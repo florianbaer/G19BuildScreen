@@ -9,9 +9,13 @@
 namespace G19BuildScreen
 {
     using System;
+    using System.Configuration;
     using System.Diagnostics;
     using System.Windows;
     using System.Windows.Threading;
+
+    using G19BuildScreen.Authorizers;
+    using G19BuildScreen.BuildInformationGetter;
 
     using GammaJul.LgLcd;
     using GammaJul.LgLcd.Wpf;
@@ -25,6 +29,12 @@ namespace G19BuildScreen
         private LcdDeviceQvga lcdDevice;
 
         private DispatcherTimer timer;
+        
+        private string tfsUri;
+
+        private string teamProject;
+
+        private string buildDefinition;
 
         private delegate void Action();
 
@@ -42,6 +52,16 @@ namespace G19BuildScreen
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            // Read Configs
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
+            this.tfsUri = config.AppSettings.Settings["Uri"].Value;
+            this.teamProject = config.AppSettings.Settings["TeamProject"].Value;
+
+            this.buildDefinition = config.AppSettings.Settings["BuildDefinition"].Value;
+
+
             this.applet = new LcdApplet("G19 Build Viewer", LcdAppletCapabilities.Qvga);
 
             // Register to events to know when a device arrives, then connects the applet to the LCD Manager
@@ -108,6 +128,14 @@ namespace G19BuildScreen
             {
                 this.lcdDevice = (LcdDeviceQvga)this.applet.OpenDeviceByType(LcdDeviceType.Qvga);
                 this.buildScreenApplet = new G19BuildScreenApplet();
+
+                BuildInformationProvider info = new BuildInformationProvider(
+                    new ActiveDirectoryBuildInformationAuthorizer(this.tfsUri),
+                    new FinishedBuildInformationGetter());
+                G19BuildScreenAppletViewModel viewModel = new G19BuildScreenAppletViewModel(info.GetBuildInformation(this.buildDefinition, this.teamProject));
+
+                this.buildScreenApplet.DataContext = viewModel;
+
                 this.lcdDevice.CurrentPage = new LcdWpfPage(this.lcdDevice) { Element = this.buildScreenApplet };
                 this.lcdDevice.SoftButtonsChanged += this.LcdDeviceSoftButtonsChanged;
 
@@ -135,8 +163,13 @@ namespace G19BuildScreen
         {
             if (this.applet.IsEnabled && this.lcdDevice != null && !this.lcdDevice.IsDisposed)
             {
+                BuildInformationProvider info = new BuildInformationProvider(
+                    new ActiveDirectoryBuildInformationAuthorizer(this.tfsUri),
+                    new FinishedBuildInformationGetter());
+                G19BuildScreenAppletViewModel viewModel = new G19BuildScreenAppletViewModel(info.GetBuildInformation(this.buildDefinition, this.teamProject));
+                this.buildScreenApplet.DataContext = viewModel;
+
                 this.lcdDevice.DoUpdateAndDraw();
-                this.buildScreenApplet.UpdateBuildInformation();
             }
         }
     }

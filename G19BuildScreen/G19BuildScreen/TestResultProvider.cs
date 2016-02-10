@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
 
+    using Microsoft.TeamFoundation.Client;
     using Microsoft.TeamFoundation.TestManagement.Client;
 
     public class TestResultProvider
@@ -16,9 +17,9 @@
         /// </summary>
         /// <param name="testManagementService">The test management service.</param>
         /// <param name="teamProject">The team project.</param>
-        public TestResultProvider(TestManagementService testManagementService, string teamProject)
+        public TestResultProvider(TfsTeamProjectCollection tfs, string teamProject)
         {
-            this.testManagementProvider = testManagementService;
+            this.testManagementProvider = (TestManagementService)tfs.GetService<ITestManagementService>();
             this.teamProject = teamProject;
         }
 

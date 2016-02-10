@@ -31,7 +31,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
-            <Label x:Name="DefinitionNameValueLabel" HorizontalAlignment="Center" FontSize="20" Margin="0,-5,0,0" FontWeight="Bold" Content="{Binding BuildDefinitionName}"/>
+            <Label x:Name="DefinitionNameValueLabel" HorizontalAlignment="Center" FontSize="16" Margin="0,-5,0,0" FontWeight="Bold" Content="{Binding BuildDefinitionName}"/>
         </StackPanel>
         <StackPanel Grid.Row="1">
             <Label x:Name="TeamProjectValueLabel" HorizontalAlignment="Center" FontSize="20" Margin="0,-5,0,0" FontWeight="Bold" Content="{Binding TeamProjectName}"/>
@@ -42,8 +42,8 @@
                     <ColumnDefinition Width="4*"/>
                     <ColumnDefinition Width="6*"/>
                 </Grid.ColumnDefinitions>
-                <Label x:Name="RequestedByLabelTitle" Grid.Column="0" HorizontalAlignment="Center" FontSize="15" HorizontalContentAlignment="Right" Margin="0,0,0,0" FontWeight="Bold" Content="Requested by:"/>
-                <Label x:Name="RequestedByLabel" Grid.Column="1" HorizontalAlignment="Center" FontSize="15" Margin="0,0,0,0" FontWeight="Bold" Content="{Binding RequestedBy}"/>
+                <Label x:Name="RequestedByLabelTitle" Grid.Column="0" HorizontalAlignment="Center" FontSize="13" HorizontalContentAlignment="Right" Margin="0,0,0,0" FontWeight="Bold" Content="Requested by:"/>
+                <Label x:Name="RequestedByLabel" Grid.Column="1" HorizontalAlignment="Center" FontSize="12" Margin="0,0,0,0" FontWeight="Bold" Content="{Binding RequestedBy}"/>
             </Grid>
         </StackPanel>
         <StackPanel Grid.Row="3">
@@ -57,7 +57,7 @@
             </Grid>
         </StackPanel>
         <StackPanel Grid.Row="4">
-            <Border x:Name="StatusBorder" Height="135" BorderThickness="3" BorderBrush="{Binding StatusColorBrush}" Margin="10, 10, 10, 10" CornerRadius="20">
+            <Border x:Name="StatusBorder" Height="115" BorderThickness="3" BorderBrush="{Binding StatusColorBrush}" Margin="10, 10, 10, 10" CornerRadius="20">
                 <Border.Background>
                     <SolidColorBrush Color="{Binding StatusColor}" Opacity="0.3"/>
                 </Border.Background>
@@ -76,7 +76,7 @@
                             <Label x:Name="SuccessfulLabelValue" HorizontalAlignment="Center" FontSize="20" Margin="0,-5,0,0" FontWeight="Bold" Content="{Binding Status}"/>
                         </StackPanel>
                         
-                        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="2,2,2,2" BorderBrush="Black" BorderThickness="0">
+                        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="2,2,2,2" HorizontalAlignment="Center" BorderBrush="Black" BorderThickness="0">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>

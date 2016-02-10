@@ -15,14 +15,13 @@ namespace G19BuildScreen
 
         public G19BuildScreenAppletViewModel()
         {
+            this.model = new G19BuildScreenAppletModel();
         }
 
         private G19BuildScreenAppletModel model;
         
 
         private readonly SolidColorBrush statusColorBrush;
-
-        private SolidColorBrush backgroundColor;
 
         private string buildDefinitionName;
 
@@ -48,17 +47,7 @@ namespace G19BuildScreen
         {
             get
             {
-                if (this.IsInDesignMode)
-                {
-                    return new SolidColorBrush(Colors.Gray);
-                }
-
-                return this.backgroundColor;
-            }
-
-            set
-            {
-                this.backgroundColor = value;
+                return new SolidColorBrush(Colors.Gray);
             }
         }
 
@@ -172,7 +161,7 @@ namespace G19BuildScreen
                 {
                     return $"Passed: 126";
                 }
-                return $"{this.model.TestResults.Passed}";
+                return $"Passed: {this.model.TestResults.Passed}";
             }
         }
 
